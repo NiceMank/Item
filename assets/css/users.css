@@ -1,0 +1,1346 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+}
+*.ico{
+    object-position: center;
+    object-fit: cover
+}
+:root{
+    --couleur-Arriere: rgb(178, 208, 236);
+    --couleur-uti: rgb(233, 235, 238);
+    --couleur-ut: rgb(152, 192, 230);
+    --couleur-list: rgb(226, 236, 245);
+}
+body.sombre{
+    --couleur-Arriere: rgb(35, 42, 48);
+    --couleur-uti: rgb(36, 37, 39);
+    --couleur-ut: rgb(62, 66, 70);
+    --couleur-list: rgba(36, 37, 39, 0.74);
+}
+footer{
+    display: none;
+}
+header *,footer *{
+    transition: 0.5s;
+}
+header{
+    height: 10vh;
+    position: relative;
+}
+body.sombre header{
+    background: rgba(36, 37, 39, 0.76);
+    backdrop-filter: blur(5px);
+    position: absolute;
+    width: 100%;
+}
+header ul{
+    margin: auto;
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+header ul li.sit{
+    width: 50%;
+    /* height: 100%; */
+    background: none;
+    margin: 5px;
+}
+header ul li.sit a{
+    margin: auto;
+    display: inline-block;
+    width: auto;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.507);
+    padding: 5px 20px;
+    border-radius: 10px;
+}
+header ul li.sit a:hover{
+    background: white;
+}
+body.sombre header ul li a:hover{
+    background: rgba(105, 105, 109, 0.712);
+}
+header ul li.sit a{
+    font-size: 20px;
+    color: rgb(100, 120, 146);
+}
+body.sombre header ul li.sit a{
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    background: none;
+}
+body{
+    /* background: var(--couleur-Arriere); */
+    overflow: hidden;
+}
+
+body.sombre *{
+    color: white;
+    /* background-color: #3b3c3d; */
+}
+header .pro *{
+    transition: 0.5s all;
+}
+header .pro{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: auto;
+    /* background: red; */
+    text-align: right;
+    align-items: center;
+    display: flex;
+    justify-content: end;
+    
+    transition: 0.5s all;
+}
+header .pro a img{
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #515561;
+    transition: 0.5s all;
+    object-position: center;
+    object-fit: cover;
+}
+header .pro a img:hover{
+    box-shadow: 0 0 10px #e1e3e9;
+    transition: 0.5s all;
+}
+body.sombre header .pro a img:hover{
+    box-shadow: 0 0 10px #2e4486;
+    transition: 0.5s all;
+}
+
+
+.aucun{
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    display: inline-block;
+}
+.aucun.active{
+    display: none;
+}
+.fa-solid{
+    cursor: pointer;
+}
+.fas{
+    cursor: pointer;
+}
+#ajoute{
+    position: absolute;
+    right: 10px;
+    padding: 10px;
+    top: 10px;
+    transition: 0.5s all;
+    border-radius: 10px;
+}
+#ajoute:hover{
+    background: #e4e1e1;
+    transition: 0.5s all;
+}
+body.sombre #ajoute:hover{
+    background: #333232;
+}
+.fa-cog img{
+    height: 30px;
+    width: 30px;
+    margin-left: 10px;
+    border-radius: 50%;
+    position: absolute;
+    margin-top: -3px;
+    object-position: center;
+    object-fit: cover;
+}
+.fa-cog{
+    font-size: 25px;
+    position: absolute;
+    top: 15px;
+    left: 10px;
+    cursor: pointer;
+    background: var(--couleur-list);
+    padding: 5px;
+    border-radius: 20px;
+    display: flex;
+    height: 35px;
+}
+
+
+/* Style du modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    backdrop-filter: blur(5px);
+}
+.modal h2{
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+}
+/* Style du contenu du modal */
+.modal-content {    
+    background-color: var(--couleur-list);
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    border-radius: 20px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Style du bouton de fermeture */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Style du conteneur de la photo de profil */
+.profile-photo-container {
+    position: relative;
+    display: inline-block;
+}
+
+#imagePreview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-position: center;
+    object-fit: cover;
+}
+
+.edit-button {
+    position: absolute;
+    top: 70%;
+    left: 70%;
+    background-color: #5479c9;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+}
+.edit-button.deux {
+    left: 100%;
+    background: none;
+    color: #5479c9;
+    font-size: 25px ;
+    display: none;
+    transform: translate(-20px, -30px);
+    background: white;
+    padding: 0;
+}
+
+.edit-button:hover {
+    background-color: #4562a0;
+}
+.edit-button.deux:hover{
+    background: none;
+    background-color: #5479c9;
+    color: white;    
+}
+#editPersonalInfoBtn{
+    border: none;
+    background: var(--couleur-ut);
+    color: white;
+    padding: 8px 10px;
+    border-radius: 20px;
+    width: 100%;
+}
+/* Style des boutons spécifiques */
+#logoutBtn {
+    background-color: #ee6060;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: 100%;border-radius: 20px;
+}
+
+#logoutBtn:hover {
+    background-color: #ee6060;
+}
+
+.danger {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 20px;
+}
+
+.danger:hover {
+    background-color: #c9302c;
+}
+#personalInfoModal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: none;
+    background-color: transparent;
+}
+
+#personalInfoModal .modal-content {
+    background-color: var(--couleur-list);
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    position: relative;
+    height: 80%;
+    left: 0;
+    overflow-y: scroll;
+    display: block;
+    border-radius: 20px 5px 5px 20px;
+}
+#personalInfoModal .modal-content::-webkit-scrollbar{
+    width: 10px;
+    background: rgba(255, 244, 244, 0.774);
+    border-radius: 30px;
+}
+#personalInfoModal .modal-content::-webkit-scrollbar-button{
+    background: transparent;
+}
+#personalInfoModal .modal-content::-webkit-scrollbar-thumb{
+    border-radius: 20px;
+    background: var(--couleur-ut);
+}
+
+#personalInfoModal .close:hover,
+#personalInfoModal .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#personalInfoModal form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+#personalInfoModal label {
+    margin-top: 10px;
+}
+#personalInfoModal input,
+#personalInfoModal button {
+    margin-top: 5px;
+    padding: 10px;
+    font-size: 16px;
+}
+#personalInfoModal input{
+    border: none;
+    height: 40px;
+    border-radius: 20px;
+}
+#personalInfoModal button{
+    border: none;
+    height: 40px;
+    border-radius: 20px;
+    background: var(--couleur-uti);
+}
+#personalInfoModal button:hover{
+    background: var(--couleur-ut);
+}
+
+/* Styles pour le bouton de bascule du thème */
+.switch {
+    width: 60px;
+    position: relative;
+    display: inline-block;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+body.sombre input:checked + .slider {
+    background-color: #363738;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+
+#farochat{
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    background: white;
+}
+body.sombre #farochat{
+    background: url(../img/neuf.jpg);
+    background-repeat: no-repeat;
+    background-position: top right;
+    background-size: cover;
+    padding-top: 10vh;
+}
+#farochat .utilisateurs{
+    background: white;
+    width: 300px;
+    min-width: 250px;
+    /* overflow: hidden; */
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 2px;
+    /* border-right: 1px rgb(197, 197, 197) solid; */
+    position: relative;
+    /* background: red; */
+    margin: 5px 10px;
+    border-radius: 20px;
+    height: 88vh;
+    box-shadow: 1px 5px 20px 0 rgb(212, 208, 208);
+}
+body.sombre #farochat .utilisateurs{
+    border: none;
+    background: rgba(36, 37, 39, 0.76);
+    backdrop-filter: blur(5px);
+    box-shadow: 1px 5px 20px 0 rgb(31, 30, 30);
+}
+#farochat .utilisateurs .cherche{
+    width: 100%;
+    /* background: rgb(170, 12, 12); */
+    display: flex;
+    text-align: center;
+    height: auto;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+#farochat .utilisateurs .cherche input{
+    border: none;
+    height: 50px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    color: #2196F3;
+}
+body.sombre #farochat .utilisateurs .cherche input::placeholder{
+    color: white;
+}
+body.sombre #farochat .utilisateurs .cherche input{
+    background: rgba(128, 122, 122, 0.384);
+    background: none;
+    border-bottom: 1px solid white;
+    color: white;
+}
+#farochat .utilisateurs .cherche button{
+    border: none;
+    background: none;
+    font-size: large;
+    position: absolute;
+    right: 0;
+    background: rgb(230, 241, 240);
+    height: 100%;
+    width: 15%;
+    border-radius: 5px;
+}
+body.sombre #farochat .utilisateurs .cherche button{
+    background: rgba(80, 78, 78, 0.253);
+}
+#farochat .utilisateurs .liste{
+    display: flex;
+    flex-direction: column;
+    background: white;
+    height: 100%;
+    margin-top: 10px;
+    border-radius: 5px;
+    text-align: left;
+    overflow-y: auto;
+    
+}
+body.sombre #farochat .utilisateurs .liste{
+    background: rgba(36, 37, 39, 0.74);
+}
+body.sombre input::placeholder{
+    color: white
+}
+body.sombre input{
+    background: gray;
+}
+#farochat .utilisateurs .liste::-webkit-scrollbar{
+    width: 10px;
+    background: rgba(255, 244, 244, 0.116);
+}
+#farochat .utilisateurs .liste::-webkit-scrollbar-thumb{
+    border-radius: 20px;
+    background: rgb(230, 230, 230);
+}
+#farochat .utilisateurs .liste .user{
+    display: flex;
+    height: 70px;
+    margin: 0 5px;
+    padding: 5px;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 2px;
+}
+#farochat .utilisateurs .liste .user:hover{
+    background: rgb(207, 203, 203);
+}
+body.sombre #farochat .utilisateurs .liste .user:hover{
+    background: rgba(255, 255, 255, 0.062);
+}
+body.sombre #farochat .utilisateurs .liste .user{
+    background: none;
+    border: none;
+}
+#farochat .utilisateurs .liste .user img{
+    height: 55px;
+    width: 55px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid var(--couleur-list);
+    object-position: center;
+    object-fit: cover;
+}
+#farochat .utilisateurs .liste .user .op.vert{
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 1px solid var(--couleur-list);
+    position: relative;
+    background: rgb(4, 255, 4);
+    margin-left: -25px;
+    margin-top: 28px;
+    min-height: 18px;
+    max-height: 18px;
+    min-width: 18px;
+    max-width: 18px;
+}
+#farochat .utilisateurs .liste .user .op.orange{
+    min-height: 18px;
+    max-height: 18px;
+    min-width: 18px;
+    max-width: 18px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 1px solid var(--couleur-list);
+    position: relative;
+    background: rgb(255, 125, 4);
+    margin-left: -25px;
+    margin-top: -15px;
+}
+#farochat .utilisateurs .liste .user .info{
+    display: flex;
+    flex-direction: column;
+}
+#farochat .utilisateurs .liste .user .info span.apercu{
+    color: gray;
+}
+#farochat .discussion .entete img{
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid var(--couleur-list);
+    object-position: center;
+    object-fit: cover;
+}
+#farochat .discussion .entete .info{
+    display: flex;
+    flex-direction: column;
+}
+#farochat .discussion .entete .info span.apercu{
+    color: rgb(35, 196, 62);
+}
+#farochat .discussion .entete .info span.apercu.dec{
+    color: rgb(206, 50, 29);
+}
+
+#farochat .discussion{
+    display: flex;
+    flex-direction: column; 
+    width: 100%;
+    min-width: 338px;
+    display: none;
+    position: relative;
+    z-index: 1;
+    width: 690px;
+    box-shadow: 1px 5px 20px 0 rgb(212, 208, 208);  
+    height: 87vh;
+    border-radius: 20px;
+    margin-top: 1vh;
+    margin-left: 10px;
+}
+body.sombre #farochat .discussion{
+    top: 0;
+    box-shadow: 1px 5px 20px 0 rgb(31, 30, 30);  
+    height: 88vh;
+    border-radius: 20px;
+    background: url(../img/neuf.jpg);
+    background-size: 150%;
+    background-position: top left;
+    border-left: 2px solid rgba(45, 45, 46, 0.774);
+}
+#farochat .discussion.active{
+    display: flex;
+    flex-direction: column;
+}
+#farochat .discussion .entete{
+    height: 80px;
+    background: white;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-size: 20px;
+    border-radius: 20px 20px 10px 10px;
+}
+body.sombre #farochat .discussion .entete{
+    background: rgba(36, 37, 39, 0.76);
+    backdrop-filter: blur(5px);
+}
+#farochat .discussion .messages{
+    height: 80%;
+    width: 100%;
+    background: white;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    scroll-behavior: smooth;
+    background-position: center;
+    background-size: cover;
+}
+body.sombre #farochat .discussion .messages{
+    backdrop-filter: blur(1px);
+    z-index: -10;
+    background: rgba(29, 29, 29, 0.26);
+}
+#farochat .discussion .messages::-webkit-scrollbar{
+    width: 10px;
+    background: rgba(255, 244, 244, 0.116);
+}
+#farochat .discussion .messages::-webkit-scrollbar-thumb{
+    border-radius: 20px;
+    background: rgb(155, 154, 154);
+}
+#farochat .discussion .messages .inform{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 0 0 50px 50px;
+    margin-bottom: 20px;
+}
+#farochat .discussion .messages .inform{
+    backdrop-filter: blur(5px);
+}
+#farochat .discussion .messages .inform img{
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    object-position: center;
+    object-fit: cover;
+}
+#farochat .discussion .messages .inform span{
+    font-size: 25px
+}
+#farochat .discussion .messages hr{
+    margin-left: 10px;
+}
+#farochat .discussion .messages .inform .secu{
+    color: black;
+    font-size: 15px;
+    margin-top: 20px;
+}
+
+body.sombre #farochat .discussion .messages .inform .secu{
+    color: rgb(255, 255, 255);
+}
+#farochat .discussion .messages .mess{
+    /* background: red; */
+    display: flex;
+    max-width: 40%;
+    width: auto;
+    height: auto;
+    margin: 15px;
+    position: relative;
+}
+#farochat .discussion .messages .mess span{
+    background-color: rgb(152, 225, 252);
+    padding: 10px;
+    border-radius: 20px 0 20px 20px;
+    text-align: left;
+}
+body.sombre #farochat .discussion .messages .mess span{
+    background-color: rgb(72, 82, 85);
+    border: 1px solid rgba(255, 255, 255, 0.062);
+}
+#farochat .discussion .messages .mess.moi span{
+    padding-right: 30px;
+}
+#farochat .discussion .messages .mess.moi .fa-check{
+    position: absolute;
+    bottom: 5px;
+    right: 13px;
+    font-size: 10px;
+}
+#farochat .discussion .messages .mess.moi .fa-check.deux{
+    transform: translate(4px,0);
+}
+#farochat .discussion .messages .mess.autre span{
+    background-color: rgb(233, 249, 255);
+    padding: 10px;
+    border-radius: 0 20px 20px 20px;
+}
+body.sombre #farochat .discussion .messages .mess.autre span{
+    background-color: rgb(137, 142, 143);
+}
+#farochat .discussion .messages .mess.moi{
+    position: relative;
+    margin-left: auto;
+    justify-content: right;
+    text-align: right;
+}
+#farochat .discussion .messages .mess.autre{
+    display: flex;
+    align-items: start;
+}
+#farochat .discussion .messages .mess.autre img{
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 10px;
+    min-height: 45px;
+    max-height: 45px;
+    min-width: 45px;
+    max-width: 45px;
+    object-position: center;
+    object-fit: cover;
+}
+
+#farochat .discussion .envoie{
+    width: 100%;
+    height: auto;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    justify-content: center;
+    font-size: 16px;
+
+}
+#farochat .discussion .envoie textarea{
+    border: none;
+    outline: none;
+    width: 90%;
+    align-content: center;
+    padding: 5px 15px;
+    border-radius: 30px;
+    height: 40px;
+    background: #dbe0e6;
+    resize: none;
+    max-lines: 100;
+    max-height: 100px;
+}
+#farochat .discussion .envoie textarea::-webkit-scrollbar{
+    display: none;
+}
+body.sombre #farochat .discussion .envoie textarea{
+    background: #303133;
+}
+#farochat .discussion .envoie button{
+    border: none;
+    background: none;
+    font-size: 20px;
+    margin-left: 5px;
+    color: #303133;
+    height: 100%;
+    width: 8%;
+}
+body.sombre #farochat .discussion .envoie button{
+
+    color: rgb(250, 248, 248);
+}
+#farochat .infor{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    background: white;
+    display: none;
+    z-index: 1;
+    box-shadow: 1px 5px 20px 0 rgb(212, 208, 208);  
+    height: 87vh;
+    border-radius: 20px;
+    margin-top: 1vh;
+    margin-left: 20px;
+}
+body.sombre #farochat .infor{
+    background: rgba(36, 37, 39, 0.76);
+    backdrop-filter: blur(5px);
+    z-index: 1;
+    box-shadow: 1px 5px 20px 0 rgb(43, 41, 41);  
+    border-radius: 20px;
+
+}
+#farochat .infor.active{
+    display: flex;
+    flex-direction: column;
+}
+#farochat .infor .part1{
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid rgb(255, 255, 255);
+    justify-content: center;
+    align-items: center;
+    height: 35%;
+}
+#farochat .infor .part1 img{
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    box-shadow: 0 0 8px black;
+    object-position: center;
+    object-fit: cover;
+}
+.fa-so{
+    background: rgb(4, 255, 4);
+    height: 15px;
+    width: 15px;
+    position: absolute;
+    border-radius: 50%;
+}
+#farochat .infor .part1 .fa-so{
+    height: 20px;
+    width: 20px;
+    margin-left: 70px;
+    margin-top: 20px;
+    box-shadow: 0 0 8px black;
+}
+#farochat .infor .part1 span{
+    font-size: 20px;
+}
+#farochat .infor .part1 span.apercu{
+    color: rgb(25, 212, 25);
+    font-weight: bolder;
+}
+#farochat .infor .part1 span.apercu.dec{
+    color: rgb(206, 50, 29);
+    font-weight: bolder;
+}
+#farochat .infor .part2{
+    height: auto;
+    min-height: 30%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgb(255, 255, 255);
+    text-align: left;
+}
+#farochat .infor .part2 span{
+    width: 85%;
+    display: inline-block;
+}
+#farochat .infor .part3{
+    height: auto;
+    display: flex;
+    padding: 20px 10px;
+    align-items: center;
+    flex-direction: column;
+}
+#farochat .infor .part3 button{
+    border: none;
+    width: 80%;
+    color: red; 
+    background: rgba(241, 184, 184, 0.836);
+    height: 30px;
+    border-radius: 20px;
+}
+#farochat .fa-chevron-left{
+    display: none;
+}
+#farochat .fa-ellipsis-v{
+    display: none;
+}
+.no{
+    text-align: center;
+    font-size: 20px;
+}
+#desc_but{
+    position: absolute;
+    bottom: 90px;
+    right: 40px;
+    padding: 15px 17px;
+    border-radius: 50%;
+    background: #303133;
+    transition: 0.5s all;
+    display: none;
+}
+#desc_but.active{
+    display: block;
+}
+#desc_but:hover{
+    background: #484a4d;
+}
+#new_friend *{
+    transition: 0.2s all;
+}
+#new_friend{
+    width: 100vw;
+    position: absolute;
+    height: 100vh;
+    backdrop-filter: blur(3px);
+    z-index: 200;
+    top: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+#new_friend.active{
+    display: block;
+}
+#new_friend .new{
+    background: rgb(255, 255, 255);
+    height: 80vh;
+    width: 350px;
+    position: relative;
+    top: 60px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(145, 140, 140, 0.705);
+    margin: auto;
+}
+body.sombre #new_friend .new{
+    background: #303133da;
+    box-shadow: 0px 0px 10px rgba(53, 52, 52, 0.705);
+}
+#new_friend .new .tittle{
+    width: 100%;
+    background: rgba(224, 220, 228, 0.719);
+    height: 40px;
+    align-content: center;
+    text-align: center;
+    font-size: 20px;
+    border-radius: 20px 20px 0 0;
+}
+body.sombre #new_friend .new .tittle{
+    background: #303133;
+}
+#clo_new{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    transition: 0.5s all;
+}
+#clo_new:hover{
+    background: #d8d6d6;
+    transition: 0.5s all;
+}
+body.sombre #clo_new:hover{
+    background: #363738;
+}
+#rech_new{
+    margin-top: 10px;
+    width: 100%;
+    /* background: #2196F3; */
+    padding: 0px 2px;
+    display: flex;
+    position: relative;
+}
+#rech_new input{
+    width: 100%;
+    height: 40px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    padding: 10px;
+    margin-right: 1px;
+    border-bottom: 1px solid rgb(83, 81, 81);
+    padding-right: 40px;
+    margin-bottom: 10px;
+}
+body.sombre #rech_new input{
+    background: none;
+}
+#rech_new button{
+    height: 40px;
+    width: 38px;
+    font-size: 15px;
+    border: none;
+    border-radius: 5px;
+    position: absolute;
+    right: 2px;
+    background: none;
+    /* border-bottom: 1px solid rgb(83, 81, 81); */
+    border-right: 1px solid rgb(83, 81, 81);
+    backdrop-filter: blur(3px);
+}
+.resu{
+     width: 100%;
+     margin: auto;
+     padding: 10px;
+     /* background-color: #2196F3; */
+     overflow-x: hidden;
+     overflow-y: scroll;
+     height: auto;
+     max-height: 350px;
+     margin-right: 2px;
+    }
+    .resu::-webkit-scrollbar{
+        background: none;
+        margin-right: 5px;
+        width: 10px;
+    }
+    .resu::-webkit-scrollbar-thumb{
+        background: rgb(83, 82, 82);
+        border-radius: 20px;
+        width: 5px;
+    }
+
+.err{
+    text-align: center;
+    margin-top: 30px;
+    align-items: center;
+    /* background-color: #2196F3; */
+    margin: auto;
+    padding-left: 70px;
+}
+.resu .user{
+    margin: 2px 0 10px 0;
+    width: 100%;
+    height: 50px;
+    padding: 5px;
+    align-items: center;
+    display: flex;
+    border-radius: 8px;
+    position: relative;
+    background: rgba(255, 250, 250, 0.466);
+    cursor: pointer;
+}
+.resu .user:hover{
+    background: rgba(226, 225, 225, 0.795);
+}
+body.sombre .resu .user{
+    background: #00000000;
+}
+body.sombre .resu .user:hover{
+    background: #2928287a;
+}
+.resu .user img{
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-position: center;
+    object-fit: cover;
+}
+.resu .user .aj{
+    position: absolute;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: rgba(226, 225, 225, 0.795);
+    transition: 0.5s all;
+}
+.resu .user .aj.av{
+    font-size: 25px;
+    font-weight: bolder;
+    text-align: center;
+    align-content: center;
+    justify-content: center;
+}
+.resu .user:hover .aj{
+    background: rgba(255, 255, 255, 0.877);
+}
+.resu .user:hover .aj.av:hover::before{
+    content: "Ajouter ";
+    transition: 0.5s all;
+    font-size: 18px;
+    font-weight: 400;
+}
+body.sombre .resu .user .aj{
+    background: rgba(41, 41, 41, 0.527);
+    backdrop-filter: blur(5px);
+}
+
+@media (max-width: 1110px){
+    
+    #farochat .infor.active{
+        width: 24%;
+    }
+    #farochat .discussion .messages{
+        overflow-x: hidden;
+        width: 100%;
+    }
+    #farochat .discussion .messages .mess{
+        /* background: red; */
+        display: flex;
+        max-width: 50%;
+        width: auto;
+        height: auto;
+        margin: 15px;
+        position: relative;
+        align-items: baseline;
+        justify-content: baseline;
+    }
+    #farochat .discussion .messages .mess.moi{
+        margin-left: auto;
+    }
+    #farochat .discussion{
+        width: 45%;
+    }
+    #farochat .utilisateurs{
+        width: 25%;
+    }
+}
+@media (max-width: 600px){
+    #farochat .infor{
+        width: 100%;
+        display: none;
+        border-radius: 0;
+    }
+    body #farochat .infor{
+        border-radius: 0;
+    }
+    #farochat .infor.active{
+        width: 100%;
+        border-radius: 0;
+        display: none;
+    }
+    #farochat .infor.activ{
+        height: 100vh;
+        border-radius: 0;
+        display: block;
+    }
+    body.sombre #farochat{
+        background: url(img/deux.jpg);
+        padding-top: 0;
+    }
+    body{
+        height: 100vh;
+        width: 100vw;
+    }
+    #farochat{
+        overflow: hidden;
+        max-height: 100vh;
+    }
+    #farochat .fa-chevron-left{
+        display: block;
+        position: absolute;
+        top: 20px;
+        left: 10px;
+        padding: 10px;
+    }
+    #farochat .fa-ellipsis-v{
+        display: block;
+        position: absolute;
+        top: 20px;
+        right: 10px;
+        padding: 10px;
+    }
+    #farochat .utilisateurs ~ #farochat .discussion{
+        display: none;
+        margin: 0;
+        border-radius: 0;
+        
+    }
+    #farochat .utilisateurs ~ #farochat .discussion.active{
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        margin: 0;
+        
+    }
+    #farochat .utilisateurs.active ~ .discussion .entete .fa-chevron-left ,#farochat .utilisateurs.active ~ .discussion .entete .fa-ellipsis-v{
+        z-index: 20;
+    }
+    #farochat .utilisateurs.active ~ .discussion{
+        position: fixed;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        margin-bottom: 0;
+        margin: 0;
+        border-radius: 0;
+        background: rgb(255, 255, 255);
+    }
+    body.sombre #farochat .utilisateurs.active ~ .discussion{
+        background: rgb(59, 59, 59);
+        background: url(img/deux.jpg);
+    }
+    .discussion.active ~ .infor{
+        display: none;
+        position: absolute;
+        background: #c9302c;
+    }
+    .discussion.active.pause ~ .infor.activ{
+        width: 100%;
+        position: fixed;
+        left: 0;
+        height: 100vh;
+        top: 0;
+        display: block;
+    }
+    .discussion.pause ~ #farochat .infor.active{
+        height: 100vh;
+        width: 100vw;
+    }
+    #farochat .aucun{
+        display: none;
+    }
+    #farochat .utilisateurs{
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        height: 100%;
+    }
+    #farochat .utilisateurs.active{
+        width: 100%;
+    }
+    #farochat .discussion .entete{
+        padding-left: 50px;
+        border-radius: 0 0 5px 5px;
+        margin: 0;
+    }
+    #farochat .discussion .envoie{
+        margin-top: 10px;
+    }
+    body.sombre #farochat .discussion .envoie textarea::placeholder {
+        color: white;
+    }
+    body #farochat .modal-content{
+        height: auto;
+        margin-top: 10px;
+    }
+    body{
+        max-height: 100vh;
+        overflow: hidden;
+    }
+    header{
+        display: none;
+    }
+    footer{
+    display: block;
+    }
+    footer{
+        height: 10vh;
+        position: fixed;
+        background: var(--couleur-uti);
+        top: 90vh;
+        width: 100%;
+    }
+    footer ul{
+        margin: auto;
+        width: 30%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+    footer ul li{
+        width: 100%;
+        height: 100%;
+        background: none;
+        margin: auto 20%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: rgb(100, 120, 146);
+    }
+    footer ul li a{
+        margin: auto;
+        margin-bottom: 10px;
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        background: none;
+        margin-bottom: -15px;
+        margin-top: -15px;
+        padding: 5px;
+        border-radius: 10px;
+        color: rgb(111, 116, 122);
+    }
+    footer ul li a:hover{
+        background: none;
+    }
+    footer ul li a i{
+        font-size: 35px;
+        color: rgb(100, 120, 146);
+    }
+}

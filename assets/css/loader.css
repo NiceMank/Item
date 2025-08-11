@@ -1,0 +1,19 @@
+.loader{
+    box-sizing: border-box;
+    padding: 0;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 40px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+body{
+    background: rgb(157, 195, 245);
+    height: 100px;
+}
+svg path,
+svg rect {
+  fill: #ffffff;
+}
