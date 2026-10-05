@@ -1,27 +1,16 @@
 <?php
-// Démarrer la session
-session_start();
+require_once __DIR__ . '/../config/database.php';
 
-include('../config/database.php');
-// Supposons que l'ID de l'utilisateur est stocké dans la session
-$userId = $_SESSION['user_id'];
-
-// Récupérer le nouveau thème depuis la requête GET
-$newTheme = $_GET['theme'];
-
-// Mettre à jour le thème de l'utilisateur
-$sql = "UPDATE users SET theme = ? WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("si", $newTheme, $userId);
-
-if ($stmt->execute()) {
-    // Rediriger vers la page principale après la mise à jour
-    header("Location: ../chats/");
-} else {
-    echo "Erreur: " . $stmt->error;
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('method');
 }
-
-// Fermeture de la connexion
+csrf_check();
+$userId = require_api_user($conn);
+$theme = ($_POST['theme'] ?? '') === 'sombre' ? 'sombre' : 'clair';
+$stmt = $conn->prepare('UPDATE users SET theme = ? WHERE id = ?');
+$stmt->bind_param('si', $theme, $userId);
+$stmt->execute();
 $stmt->close();
-$conn->close();
-?>
+header('Content-Type: text/plain; charset=utf-8');
+echo 'ok';

@@ -1,61 +1,49 @@
 <?php
-session_start();
-include('config/database.php');
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+require_once __DIR__ . '/config/database.php';
 
-    // Préparer et lier
-    $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
+if (current_user_id($conn)) {
+    header('Location: home/index.php');
+    exit;
+}
+
+$erreur = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
+    $email = clip_str((string) ($_POST['email'] ?? ''), 190);
+    $password = (string) ($_POST['password'] ?? '');
+    $stmt = $conn->prepare('SELECT id, password FROM users WHERE email = ?');
+    $stmt->bind_param('s', $email);
     $stmt->execute();
-    $stmt->store_result();
+    $user = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
 
-    // Vérifier si l'utilisateur existe
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $hashedPassword);
-        $stmt->fetch();
-
-        // Vérifier le mot de passe
-        if (password_verify($password, $hashedPassword)) {
-            $_SESSION['user_id'] = $id;
-            setcookie("user_id", $id, time() + (86400), "/");
-            $sql = "UPDATE users SET etat_compte = '1' WHERE id = '$id'";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            header("Location: loading.php");
-            exit();
-        } else {
-            $erreur = "Email ou mot de passe incorrect";
-        }
-    } else {
-        $erreur = "Email ou mot de passe incorrect";
+    if ($user && password_verify($password, (string) $user['password'])) {
+        remember_user($conn, (int) $user['id']);
+        header('Location: loading.php');
+        exit;
     }
+    $erreur = 'Email ou mot de passe incorrect';
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="shortcut icon" href="assets/img/img.png" type="image/x-icon">
 </head>
 <body>
     <div class="container">
-        <?php
-            if (isset($erreur)) {
-                ?>
-                    <span class="err">
-                    Email ou mot de passe incorrect
-                    </span>
-                <?php
-            }
-        ?>
-        <h2>Connexion à FaroChat</h2>
+        <?php if ($erreur): ?>
+            <span class="err"><?php echo h($erreur); ?></span>
+        <?php endif; ?>
+        <h2>Connexion à Idem</h2>
         <form action="" method="POST">
-            <input type="email" name="email" placeholder="Adresse e-mail" required>
-            <input type="password" name="password" placeholder="Mot de passe" required>
+            <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
+            <input type="email" name="email" placeholder="Adresse e-mail" required maxlength="190" autocomplete="email">
+            <input type="password" name="password" placeholder="Mot de passe" required autocomplete="current-password">
             <button type="submit">Se connecter</button>
         </form>
         <div class="link">

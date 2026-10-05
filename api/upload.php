@@ -1,26 +1,19 @@
 <?php
-// Configurer la connexion à la base de données
+require_once __DIR__ . '/../config/database.php';
 
-include('../config/database.php');
-session_start();
-
-if ($_FILES['image']['error'] == UPLOAD_ERR_OK) {
-    $uploadDir = '../upload/';
-    $uploadFile = $uploadDir . basename($_FILES['image']['name']);
-    if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
-        // Mise à jour de la base de données avec le chemin du fichier téléchargé
-        $userId = $_SESSION['user_id']; // Remplacez par l'ID de l'utilisateur actuel
-        $stmt = $conn->prepare('UPDATE users SET profil = ? WHERE id = ?');
-        if ($stmt->execute([$uploadFile, $userId])) {
-            header("Location: ../chats/");
-        } else {
-            echo 'Failed to update the database!';
-        }
-    } else {
-        echo 'Failed to move uploaded file!';
-    }
-} else {
-    echo 'File upload error!';
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('method');
 }
-// header('Location: loading.php');
-?>
+csrf_check();
+$userId = require_login($conn, '../connexion.php');
+$path = save_image_upload($_FILES['image'] ?? []);
+if ($path === null) {
+    flash_set('Image invalide. Formats acceptés : JPG, PNG, GIF, WEBP (5 Mo max).');
+    redirect_back('../chats/discussion.php');
+}
+$stmt = $conn->prepare('UPDATE users SET profil = ? WHERE id = ?');
+$stmt->bind_param('si', $path, $userId);
+$stmt->execute();
+$stmt->close();
+redirect_back('../chats/discussion.php');

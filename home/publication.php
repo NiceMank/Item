@@ -1,26 +1,42 @@
 <?php
-    session_start();
-    include('../config/database.php');
-    if (isset($_POST['pub'])) {
-        $pub = $_POST['pub'];
-        $id = $_SESSION['user_id'];
+require_once __DIR__ . '/../config/database.php';
 
-        $stor = $conn->prepare("INSERT INTO publications (pub_text, id_user) VALUES (\"$pub\",'$id')");
-        $stor->execute();
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: index.php');
+    exit;
+}
+csrf_check();
+$userId = require_login($conn, '../connexion.php');
+
+if (isset($_POST['pub'])) {
+    $text = clip_str((string) $_POST['pub'], 5000);
+    if ($text === '') {
+        flash_set('Écrivez quelque chose avant de publier.');
         header('Location: index.php');
-    }else if (isset($_FILES['pub_img'])) {
-        $image = $_FILES['pub_img']['name'];
-        $id = $_SESSION['user_id'];
-        
-        $target_dir = "../upload/";
-        $target_file = $target_dir . basename($image);
-        $uploadOk = 1;
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-        move_uploaded_file($_FILES["pub_img"]["tmp_name"], $target_file);
-        $img_fin = $target_file;
-        $mod = $conn->prepare("INSERT INTO publications (pub_image, id_user) VALUES ( \"$img_fin\",'$id')");
-        $mod->execute();
-       header('Location: index.php');
+        exit;
     }
-    // header('Location: index.php');
-?>
+    $image = '';
+    $stmt = $conn->prepare('INSERT INTO publications (pub_text, pub_image, id_user) VALUES (?, ?, ?)');
+    $stmt->bind_param('ssi', $text, $image, $userId);
+    $stmt->execute();
+    $stmt->close();
+    header('Location: index.php');
+    exit;
+}
+
+if (!empty($_FILES['pub_img']['name'])) {
+    $path = save_image_upload($_FILES['pub_img']);
+    if ($path === null) {
+        flash_set('Image invalide. Formats acceptés : JPG, PNG, GIF, WEBP (5 Mo max).');
+        header('Location: index.php');
+        exit;
+    }
+    $text = '';
+    $stmt = $conn->prepare('INSERT INTO publications (pub_text, pub_image, id_user) VALUES (?, ?, ?)');
+    $stmt->bind_param('ssi', $text, $path, $userId);
+    $stmt->execute();
+    $stmt->close();
+}
+
+header('Location: index.php');
+exit;

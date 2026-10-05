@@ -1,16 +1,24 @@
 <?php
-session_start();
-include('config.php');
-$id = $_COOKIE['user_id'];
-$sql = "UPDATE users SET etat_compte = '0' WHERE id = '$id'";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-session_unset();
-session_destroy();
+require_once __DIR__ . '/../config/database.php';
 
-
-setcookie("user_id", "", time() - 3600, "/");
-?>
-<script>
-    window.location.href = "loading.php";
-</script>
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: ../connexion.php');
+    exit;
+}
+csrf_check();
+$userId = current_user_id($conn);
+if ($userId) {
+    $offline = '0';
+    $stmt = $conn->prepare('UPDATE users SET etat_compte = ?, remember_token = NULL WHERE id = ?');
+    $stmt->bind_param('si', $offline, $userId);
+    $stmt->execute();
+    $stmt->close();
+}
+forget_user();
+if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'fetch') {
+    header('Content-Type: text/plain; charset=utf-8');
+    echo 'ok';
+    exit;
+}
+header('Location: ../connexion.php');
+exit;
