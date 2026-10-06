@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/tabbar.php';
 
 $userId = require_login($conn, '../connexion.php');
 $user_moi = fetch_user($conn, $userId);
@@ -22,52 +23,52 @@ $photo = profile_src($user_moi['profil'] ?? '');
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Idem | Messagerie</title>
-    <link rel="stylesheet" href="../assets/css/users.css">
-    <link rel="shortcut icon" href="../assets/img/img.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Idem | Messages</title>
+    <link rel="stylesheet" href="../assets/css/ios.css">
+    <link rel="shortcut icon" href="../assets/img/WeLogo1.png" type="image/x-icon">
 </head>
-<body class="<?php echo h(theme_class($user_moi['theme'] ?? '')); ?>" data-profil="<?php echo h($photo); ?>">
+<body class="<?php echo h(theme_class($user_moi['theme'] ?? '')); ?> page-chat" data-profil="<?php echo h($photo); ?>">
     <?php include __DIR__ . '/../includes/header.php'; ?>
-    <?php if ($flash): ?><p class="flash" style="position:fixed;top:70px;left:20px;background:#c0392b;color:#fff;padding:8px 12px;border-radius:8px;z-index:500;"><?php echo h($flash); ?></p><?php endif; ?>
 
     <section id="farochat">
         <section id="ut" class="utilisateurs">
-            <i class="fas fa-cog para" id="openModal"><img src="<?php echo h($photo); ?>" alt=""></i>
-            <h1>Discussion <i class="fas fa-sync" id="refreshUsers"></i></h1>
-            <i id="ajoute" class="fas fa-edit"></i>
+            <?php if ($flash): ?><p class="flash"><?php echo h($flash); ?></p><?php endif; ?>
+            <button type="button" class="para" id="openModal" aria-label="Réglages"><img src="<?php echo h($photo); ?>" alt=""></button>
+            <h1>Messages <button type="button" id="refreshUsers" aria-label="Actualiser"><?php echo icon('refresh'); ?></button></h1>
+            <button type="button" id="ajoute" aria-label="Nouvelle discussion"><?php echo icon('edit'); ?></button>
             <div class="liste" id="list_user">
                 <ul id="aff"></ul>
             </div>
         </section>
         <section id="disc" class="discussion">
             <div class="entete">
-                <i id="retour1" class="fas fa-chevron-left"></i>
-                <img id="profilePic" src="" alt="">
+                <button type="button" id="retour1" aria-label="Retour"><?php echo icon('back'); ?></button>
+                <img id="profilePic" src="../assets/img/profile.png" alt="">
                 <div class="info">
                     <span id="username"></span>
-                    <span id="con1" class="apercu">Connecté</span>
+                    <span id="con1" class="apercu"></span>
                 </div>
-                <i id="in" class="fas fa-ellipsis-v"></i>
+                <button type="button" id="in" aria-label="Infos"><?php echo icon('more'); ?></button>
             </div>
             <div class="messages" id="messages">
                 <div class="inform">
-                    <img id="pro2" class="inf-img" src="" alt="">
+                    <img id="pro2" class="inf-img" src="../assets/img/profile.png" alt="">
                     <span id="nom2" class="inf-nom"></span>
                     <span class="secu">Commencez à écrire !!</span>
                 </div>
                 <hr>
                 <div id="messa"></div>
             </div>
-            <a href="#desc" class="fas fa-arrow-down" id="desc_but"></a>
+            <a href="#desc" id="desc_but" aria-label="Bas de la discussion"><?php echo icon('down'); ?></a>
             <form class="envoie" action="../api/send_message.php" id="me_send" method="post">
-                <textarea name="message" id="messageInput" required placeholder="Écrivez un message ..." maxlength="2000"></textarea>
-                <button type="submit" class="fa-solid fa-paper-plane"></button>
+                <textarea name="message" id="messageInput" required placeholder="Message" maxlength="2000"></textarea>
+                <button type="submit" aria-label="Envoyer"><?php echo icon('send'); ?></button>
             </form>
         </section>
         <section class="infor">
             <div class="part1">
-                <i id="retour2" class="fas fa-chevron-left"></i>
+                <button type="button" id="retour2" aria-label="Retour"><?php echo icon('back'); ?></button>
                 <img id="pro" class="inf-img" src="" alt="">
                 <span id="nom" class="inf-nom"></span>
                 <span id="con2" class="apercu"></span>
@@ -95,8 +96,8 @@ $photo = profile_src($user_moi['profil'] ?? '');
                 <input type="hidden" name="redirect" value="../chats/discussion.php">
                 <div class="profile-photo-container">
                     <img id="imagePreview" src="<?php echo h($photo); ?>" alt="Aperçu de l'image">
-                    <i id="uploadIcon" class="fa fa-pencil edit-button"></i>
-                    <button type="submit" class="fas fa-circle-check edit-button deux" id="send"></button>
+                    <button type="button" id="uploadIcon" aria-label="Changer la photo"><?php echo icon('edit'); ?></button>
+                    <button type="submit" id="send">Enregistrer</button>
                     <input name="image" type="file" id="imageInput" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none">
                 </div>
                 <br>
@@ -104,10 +105,13 @@ $photo = profile_src($user_moi['profil'] ?? '');
                 <br><br>
                 <button type="button" id="editPersonalInfoBtn">Modifier informations personnelles</button>
                 <br><br>
-                <label class="switch">
-                    <input type="checkbox" id="themeSwitch" <?php echo $isChecked; ?>>
-                    <span class="slider round"></span>
-                </label>
+                <div class="set-row">
+                    <span>Mode sombre</span>
+                    <label class="switch">
+                        <input type="checkbox" id="themeSwitch" <?php echo $isChecked; ?>>
+                        <span class="slider"></span>
+                    </label>
+                </div>
                 <br><br>
                 <button type="button" id="logoutBtn">Se déconnecter</button>
                 <br><br>
@@ -145,10 +149,10 @@ $photo = profile_src($user_moi['profil'] ?? '');
     <section id="new_friend">
         <div class="new">
             <div class="tittle"><span>Nouvelle discussion</span></div>
-            <i id="clo_new" class="fas fa-close"></i>
+            <button type="button" id="clo_new" aria-label="Fermer"><?php echo icon('close'); ?></button>
             <form id="rech_new" action="">
-                <input type="search" name="new_uti" id="new_uti" placeholder="Rechercher un(e) ami(e)">
-                <button type="submit" class="fas fa-paper-plane"></button>
+                <input type="search" name="new_uti" id="new_uti" placeholder="Rechercher">
+                <button type="submit" aria-label="Rechercher"><?php echo icon('search'); ?></button>
             </form>
             <div class="resu">
                 <?php if ($users): ?>
@@ -166,16 +170,7 @@ $photo = profile_src($user_moi['profil'] ?? '');
         </div>
     </section>
 
-    <footer>
-        <ul>
-            <li><a href="../home/index.php"><i class="fas fa-home"></i></a></li>
-            <li><a href="discussion.php"><i class="fas fa-comments"></i></a></li>
-            <li><a href="#" class="js-notifs"><i class="fas fa-bell"></i></a></li>
-        </ul>
-        <li class="pro">
-            <a href="../profile/profile.php"><img src="<?php echo h($photo); ?>" alt=""></a>
-        </li>
-    </footer>
+    <?php render_tabbar('chat'); ?>
     <script src="../assets/js/discussion.js"></script>
     <script>
         document.getElementById('refreshUsers').addEventListener('click', function () {

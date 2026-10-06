@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/icons.php';
 
 $userId = require_api_user($conn);
 $receiverId = (int) ($_GET['receiver_id'] ?? 0);
@@ -27,7 +28,7 @@ while ($row = $result->fetch_assoc()) {
     echo '<div class="mess ' . $messageClass . '" title="' . h($who) . '">';
     echo '<span>' . nl2br(h($row['message'])) . '</span>';
     if ($mine) {
-        echo '<i class="fas fa-check un"></i><i class="fas fa-check deux"></i>';
+        echo '<span class="ticks">' . icon('check') . icon('check') . '</span>';
     }
     echo '</div>';
 }

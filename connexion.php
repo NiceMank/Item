@@ -31,15 +31,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="shortcut icon" href="assets/img/img.png" type="image/x-icon">
+    <link rel="stylesheet" href="assets/css/ios.css">
+    <link rel="shortcut icon" href="assets/img/WeLogo1.png" type="image/x-icon">
 </head>
-<body>
-    <div class="container">
+<body class="page-auth">
+    <div class="auth-card">
+        <div class="brand-hero">
+            <span class="brand-mark">I</span>
+        </div>
+        <h1>Idem</h1>
+        <p class="sub">Connectez-vous pour continuer</p>
         <?php if ($erreur): ?>
-            <span class="err"><?php echo h($erreur); ?></span>
+            <p class="err"><?php echo h($erreur); ?></p>
         <?php endif; ?>
-        <h2>Connexion à Idem</h2>
         <form action="" method="POST">
             <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
             <input type="email" name="email" placeholder="Adresse e-mail" required maxlength="190" autocomplete="email">

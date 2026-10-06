@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/render.php';
+require_once __DIR__ . '/../includes/tabbar.php';
 
 $uid = require_login($conn, '../connexion.php');
 $user_moi = fetch_user($conn, $uid);
@@ -33,89 +34,86 @@ $friendsStmt->close();
 
 $photo = profile_src($view['profil'] ?? '');
 $myPhoto = profile_src($user_moi['profil'] ?? '');
+$meta = array_filter([
+    $view['travail'] ?? '',
+    $view['Lieu_travail'] ?? '',
+]);
+$details = [];
+if (($view['genre'] ?? '') !== '') {
+    $details[] = $view['genre'];
+}
+if (($view['date_nais'] ?? '') !== '') {
+    $details[] = $view['date_nais'];
+}
+if (($view['situation'] ?? '') !== '') {
+    $details[] = $view['situation'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title><?php echo h(display_name($view)); ?> | Profil</title>
-    <link rel="stylesheet" href="../assets/css/accueil.css">
+    <link rel="stylesheet" href="../assets/css/ios.css">
     <link rel="shortcut icon" href="../assets/img/WeLogo1.png" type="image/x-icon">
-    <style>
-        .profile-card, .profile-edit, .friends {
-            background: rgba(255,255,255,.86);
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 18px;
-        }
-        body.sombre .profile-card, body.sombre .profile-edit, body.sombre .friends { background: rgba(40,40,43,.92); color: #fff; }
-        .profile-head { display: flex; gap: 16px; align-items: center; }
-        .profile-head img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }
-        .profile-edit form, .avatar-form { display: flex; flex-direction: column; gap: 8px; }
-        .profile-edit input, .avatar-form input[type="file"] { padding: 8px; border-radius: 8px; border: 1px solid #ccc; }
-        .profile-edit button, .avatar-form button, .friend-btn, .danger {
-            border: 0; border-radius: 8px; padding: 10px 14px; cursor: pointer; background: #4398e9; color: white;
-        }
-        .danger { background: #c0392b; }
-        .friends a { display: flex; gap: 8px; align-items: center; margin: 8px 0; color: inherit; text-decoration: none; }
-        .friends img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
-        .flash { background: #c0392b; color: white; padding: 10px 12px; border-radius: 8px; }
-    </style>
 </head>
-<body class="<?php echo h(theme_class($user_moi['theme'] ?? '')); ?>" data-profil="<?php echo h($myPhoto); ?>">
+<body class="<?php echo h(theme_class($user_moi['theme'] ?? '')); ?> page-profile" data-profil="<?php echo h($myPhoto); ?>">
     <?php include __DIR__ . '/../includes/header.php'; ?>
     <section id="corps">
+        <div class="large-title">
+            <p class="eyebrow">Profil</p>
+            <h1><?php echo $isSelf ? 'Vous' : h($view['prenom']); ?></h1>
+        </div>
         <?php if ($flash): ?><p class="flash"><?php echo h($flash); ?></p><?php endif; ?>
-        <section class="profile-card">
-            <div class="profile-head">
-                <img src="<?php echo h($photo); ?>" alt="">
-                <div>
-                    <h2><?php echo h(display_name($view)); ?></h2>
-                    <p><?php echo h($view['travail'] ?? ''); ?><?php echo ($view['Lieu_travail'] ?? '') !== '' ? ' · ' . h($view['Lieu_travail']) : ''; ?></p>
-                    <p>
-                        <?php if (($view['genre'] ?? '') !== '') echo h($view['genre']) . ' · '; ?>
-                        <?php if (($view['date_nais'] ?? '') !== '') echo 'Né(e) le ' . h($view['date_nais']) . ' · '; ?>
-                        <?php echo h($view['situation'] ?? ''); ?>
-                    </p>
-                    <p><?php echo ($view['etat_compte'] ?? '0') === '1' ? 'Connecté' : 'Déconnecté'; ?></p>
-                    <?php if (!$isSelf): ?>
-                        <button type="button" class="friend-btn" id="friendBtn" data-id="<?php echo $viewId; ?>">
-                            <?php echo $isFriend ? 'Retirer de mes discussions' : 'Ajouter'; ?>
-                        </button>
-                        <a href="../chats/discussion.php">Écrire</a>
-                    <?php endif; ?>
-                </div>
-            </div>
+        <section class="profile-hero">
+            <img src="<?php echo h($photo); ?>" alt="">
+            <h2><?php echo h(display_name($view)); ?></h2>
+            <?php if ($meta): ?><p><?php echo h(implode(' · ', $meta)); ?></p><?php endif; ?>
+            <?php if ($details): ?><p><?php echo h(implode(' · ', $details)); ?></p><?php endif; ?>
+            <p><?php echo ($view['etat_compte'] ?? '0') === '1' ? 'En ligne' : 'Hors ligne'; ?></p>
+            <?php if (!$isSelf): ?>
+                <button type="button" class="friend-btn" id="friendBtn" data-id="<?php echo $viewId; ?>">
+                    <?php echo $isFriend ? 'Retirer' : 'Ajouter'; ?>
+                </button>
+                <a class="linkish" href="../chats/discussion.php">Message</a>
+            <?php endif; ?>
         </section>
 
         <?php if ($isSelf): ?>
-        <section class="profile-edit">
-            <h3>Photo de profil</h3>
+        <section class="group profile-edit">
+            <h3>Photo</h3>
             <form class="avatar-form" action="../api/upload.php" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
                 <input type="hidden" name="redirect" value="../profile/profile.php">
-                <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" required>
+                <label><span>Image</span><input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" required></label>
                 <button type="submit">Enregistrer la photo</button>
             </form>
+        </section>
+        <section class="group profile-edit">
             <h3>Informations</h3>
             <form action="../api/modif_info.php" method="post">
                 <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
                 <input type="hidden" name="redirect" value="../profile/profile.php">
-                <label>Nom <input type="text" name="lastName" required maxlength="80" value="<?php echo h($view['nom']); ?>"></label>
-                <label>Prénom <input type="text" name="firstName" required maxlength="80" value="<?php echo h($view['prenom']); ?>"></label>
-                <label>Sexe <input type="text" name="genre" maxlength="40" value="<?php echo h($view['genre']); ?>"></label>
-                <label>Date de naissance <input type="date" name="birthdate" value="<?php echo h($view['date_nais']); ?>"></label>
-                <label>Occupation <input type="text" name="job" maxlength="120" value="<?php echo h($view['travail']); ?>"></label>
-                <label>Lieu de travail <input type="text" name="workplace" maxlength="120" value="<?php echo h($view['Lieu_travail']); ?>"></label>
-                <label>Situation <input type="text" name="relationshipStatus" maxlength="80" value="<?php echo h($view['situation']); ?>"></label>
+                <label><span>Nom</span><input type="text" name="lastName" required maxlength="80" value="<?php echo h($view['nom']); ?>"></label>
+                <label><span>Prénom</span><input type="text" name="firstName" required maxlength="80" value="<?php echo h($view['prenom']); ?>"></label>
+                <label><span>Sexe</span><input type="text" name="genre" maxlength="40" value="<?php echo h($view['genre']); ?>"></label>
+                <label><span>Naissance</span><input type="date" name="birthdate" value="<?php echo h($view['date_nais']); ?>"></label>
+                <label><span>Occupation</span><input type="text" name="job" maxlength="120" value="<?php echo h($view['travail']); ?>"></label>
+                <label><span>Lieu</span><input type="text" name="workplace" maxlength="120" value="<?php echo h($view['Lieu_travail']); ?>"></label>
+                <label><span>Situation</span><input type="text" name="relationshipStatus" maxlength="80" value="<?php echo h($view['situation']); ?>"></label>
                 <button type="submit">Enregistrer</button>
             </form>
-            <p>
-                <label class="switch">Thème sombre
+        </section>
+        <section class="group">
+            <h3>Réglages</h3>
+            <div class="set-row">
+                <span>Mode sombre</span>
+                <label class="switch">
                     <input type="checkbox" id="themeSwitch" <?php echo theme_class($user_moi['theme'] ?? '') === 'sombre' ? 'checked' : ''; ?>>
+                    <span class="slider"></span>
                 </label>
-            </p>
+            </div>
             <form action="../auth/decon.php" method="post">
                 <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
                 <button type="submit">Se déconnecter</button>
@@ -130,7 +128,7 @@ $myPhoto = profile_src($user_moi['profil'] ?? '');
         <section class="friends">
             <h3>Discussions</h3>
             <?php if (!$friends): ?>
-                <p>Aucune discussion pour le moment.</p>
+                <p class="empty">Aucune discussion pour le moment.</p>
             <?php endif; ?>
             <?php foreach ($friends as $friend): ?>
                 <a href="profile.php?id=<?php echo (int) $friend['id']; ?>">
@@ -142,20 +140,15 @@ $myPhoto = profile_src($user_moi['profil'] ?? '');
 
         <section id="publication">
             <div class="pubs">
-                <?php if (!$posts): ?><p>Aucune publication.</p><?php endif; ?>
-                <?php foreach ($posts as $post) render_publication($post); ?>
+                <?php if (!$posts): ?><p class="empty">Aucune publication.</p><?php endif; ?>
+                <?php foreach ($posts as $post) {
+                    render_publication($post);
+                } ?>
             </div>
         </section>
         <?php include __DIR__ . '/../includes/comment_modal.php'; ?>
     </section>
-    <footer>
-        <ul>
-            <li><a href="../home/index.php"><i class="fas fa-home"></i></a></li>
-            <li><a href="../chats/discussion.php"><i class="fas fa-comments"></i></a></li>
-            <li><a href="#" class="js-notifs"><i class="fas fa-bell"></i></a></li>
-            <li><a href="profile.php"><i class="fas fa-user"></i></a></li>
-        </ul>
-    </footer>
+    <?php render_tabbar('profile'); ?>
     <script src="../assets/js/feed.js"></script>
     <script>
         var theme = document.getElementById('themeSwitch');
@@ -182,7 +175,7 @@ $myPhoto = profile_src($user_moi['profil'] ?? '');
                     headers: {'X-CSRF-Token': csrfToken()},
                     body: body
                 }).then(function (r) { return r.text(); }).then(function (text) {
-                    friendBtn.textContent = text.trim() === 'oui' ? 'Retirer de mes discussions' : 'Ajouter';
+                    friendBtn.textContent = text.trim() === 'oui' ? 'Retirer' : 'Ajouter';
                 });
             });
         }
