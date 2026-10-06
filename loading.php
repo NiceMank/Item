@@ -1,9 +1,16 @@
+<?php
+require_once __DIR__ . '/config/database.php';
+if (!current_user_id($conn)) {
+    header('Location: connexion.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FaroChat | Chargement</title>
+    <title>Idem | Chargement</title>
     <link rel="stylesheet" href="assets/css/loader.css">
     <link rel="shortcut icon" href="assets/img/img.png" type="image/x-icon">
 </head>
@@ -15,9 +22,9 @@
       </path>
     </svg>
     <script>
-        setTimeout(function() {
+        setTimeout(function () {
             window.location.href = "home/index.php";
-        }, 2000);
+        }, 800);
     </script>
   </div>
 </body>

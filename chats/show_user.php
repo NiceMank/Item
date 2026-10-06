@@ -1,116 +1,98 @@
 <?php
-include('config.php');
-session_start();
+require_once __DIR__ . '/../config/database.php';
 
-// Fonction d'affichage du temps
-function format_time_ago($datetime) {
-    $timestamp = strtotime($datetime);
+$userId = current_user_id($conn);
+header('Content-Type: text/html; charset=utf-8');
+header('Cache-Control: no-store');
+if (!$userId) {
+    exit;
+}
+
+function format_time_ago($datetime): string
+{
+    $timestamp = strtotime((string) $datetime);
+    if (!$timestamp) {
+        return '';
+    }
     $diff = time() - $timestamp;
-
     if ($diff < 60) {
-        return "À l’instant";
-    } elseif ($diff < 3600) {
-        $minutes = floor($diff / 60);
-        return "Il y a $minutes min";
-    } elseif ($diff < 86400) {
-        $hours = floor($diff / 3600);
-        return "Il y a $hours h";
-    } elseif ($diff < 172800) {
-        return "Hier à " . date("H:i", $timestamp);
-    } else {
-        return date("d/m/Y à H:i", $timestamp);
+        return "À l'instant";
     }
+    if ($diff < 3600) {
+        return 'Il y a ' . floor($diff / 60) . ' min';
+    }
+    if ($diff < 86400) {
+        return 'Il y a ' . floor($diff / 3600) . ' h';
+    }
+    if ($diff < 172800) {
+        return 'Hier à ' . date('H:i', $timestamp);
+    }
+    return date('d/m/Y à H:i', $timestamp);
 }
 
-$amis = $conn
-
-// Récupère l'ID utilisateur depuis le cookie
-$user_id = $_COOKIE['user_id'];
-
-// Préparer la requête pour récupérer les autres utilisateurs
-$stmt = $conn->prepare("SELECT * FROM users WHERE id != ?");
-$stmt->bind_param("i", $user_id);
+$sql = 'SELECT u.*,
+        (SELECT MAX(m.created_at) FROM messages m
+            WHERE (m.id_moi = ? AND m.id_autre = u.id) OR (m.id_moi = u.id AND m.id_autre = ?)) AS last_at
+        FROM users u
+        WHERE u.id != ?
+        AND (
+            EXISTS (SELECT 1 FROM discussion d WHERE (d.id_moi = ? AND d.id_autre = u.id) OR (d.id_moi = u.id AND d.id_autre = ?))
+            OR EXISTS (SELECT 1 FROM messages m2 WHERE (m2.id_moi = ? AND m2.id_autre = u.id) OR (m2.id_moi = u.id AND m2.id_autre = ?))
+        )
+        ORDER BY last_at DESC, u.nom ASC';
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('iiiiiii', $userId, $userId, $userId, $userId, $userId, $userId, $userId);
 $stmt->execute();
-$result = $stmt->get_result();
+$users = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 
-$users = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $users[] = $row;
-    }
+if (!$users) {
+    echo '<li class="no">Aucun contact. Utilisez + pour démarrer une discussion.</li>';
+    exit;
 }
-?>
 
-<?php if (!empty($users)): ?>
-    <?php foreach ($users as $user): ?>
-        <li class="user" onclick="me('<?php echo $user['id']; ?>',
-                                     '<?php echo htmlspecialchars($user['prenom']) . ' ' . htmlspecialchars($user['nom']); ?>',
-                                     '<?php echo $user['profil']; ?>',
-                                     '<?php echo $user['date_nais']; ?>',
-                                     '<?php echo $user['travail']; ?>',
-                                     '<?php echo $user['Lieu_travail']; ?>',
-                                     '<?php echo $user['genre']; ?>',
-                                     '<?php echo $user['situation']; ?>',
-                                     '<?php echo $user['etat_compte']; ?>')">
+$msgStmt = $conn->prepare('SELECT id_moi, message, created_at FROM messages
+    WHERE (id_moi = ? AND id_autre = ?) OR (id_moi = ? AND id_autre = ?)
+    ORDER BY created_at DESC, id DESC LIMIT 1');
 
-            <?php
-            // Requête pour le dernier message
-            $app = $conn->prepare("
-                SELECT * FROM messages 
-                WHERE (id_moi = ? AND id_autre = ?) OR (id_autre = ? AND id_moi = ?) 
-                ORDER BY created_at DESC
-            ");
-            $app->bind_param("iiii", $_SESSION['user_id'], $user['id'], $user['id'], $_SESSION['user_id']);
-            $app->execute();
-            $appp = $app->get_result();
-            $dernier_msg = $appp->fetch_assoc();
-            ?>
-
-            <!-- Photo de profil -->
-            <img id="pro_prin" src="<?php 
-                echo $user['profil'] == "" ? "img/profile.png" : htmlspecialchars($user['profil']); 
-            ?>" alt="Profile Picture">
-
-            <!-- Indicateur de statut -->
-            <?php
-                if ($user['etat_compte'] == '1') {
-                    echo "<span class='op vert'></span>";
-                } else {
-                    echo "<span class='op orange'></span>";
-                }
-            ?>
-
-            <!-- Nom + Message + Date -->
-            <div class="info" style="position: relative;">
-                <span id="nom_pri"><?php echo htmlspecialchars($user['prenom']) . " " . htmlspecialchars($user['nom']); ?></span>
-                
-                <span id="der_mess" class="apercu" style="display: flex; flex-direction: column;width:100%;">
-                    <?php 
-                        if ($dernier_msg) {
-                            $prefix = ($dernier_msg["id_moi"] == $_SESSION["user_id"]) ? "Vous : " : "";
-                            $message = $prefix . $dernier_msg["message"];
-                            echo htmlspecialchars(mb_strimwidth($message, 0, 30, '...'));
-                        } else {
-                            echo "Aucun message";
-                        }
-                    ?>
-                <?php if ($dernier_msg): ?>
-                    <span class="date_msg" style="
-                        text-align: right;
-                        font-size: 15px;
-                        color: gray;
-                        position: relative;
-                        width: 200px;
-                        ">
-                        <?php echo format_time_ago($dernier_msg['created_at']); ?>
-                    </span>
-                <?php endif; ?>
-                </span>
-
-            </div>
-        </li>
-    <?php endforeach; ?>
-<?php else: ?>
-    <br>
-    <p class="no">Aucun utilisateur trouvé.</p>
-<?php endif; ?>
+foreach ($users as $user) {
+    $otherId = (int) $user['id'];
+    $msgStmt->bind_param('iiii', $userId, $otherId, $otherId, $userId);
+    $msgStmt->execute();
+    $last = $msgStmt->get_result()->fetch_assoc();
+    $name = display_name($user);
+    $preview = 'Aucun message';
+    $when = '';
+    if ($last) {
+        $prefix = (int) $last['id_moi'] === $userId ? 'Vous : ' : '';
+        $preview = $prefix . (string) $last['message'];
+        if (function_exists('mb_strimwidth')) {
+            $preview = mb_strimwidth($preview, 0, 30, '...');
+        } elseif (strlen($preview) > 30) {
+            $preview = substr($preview, 0, 27) . '...';
+        }
+        $when = format_time_ago($last['created_at'] ?? '');
+    }
+    ?>
+    <li class="user"
+        data-id="<?php echo $otherId; ?>"
+        data-name="<?php echo h($name); ?>"
+        data-profil="<?php echo h(profile_src($user['profil'] ?? '')); ?>"
+        data-date="<?php echo h($user['date_nais'] ?? ''); ?>"
+        data-occup="<?php echo h($user['travail'] ?? ''); ?>"
+        data-lieu="<?php echo h($user['Lieu_travail'] ?? ''); ?>"
+        data-genre="<?php echo h($user['genre'] ?? ''); ?>"
+        data-situ="<?php echo h($user['situation'] ?? ''); ?>"
+        data-etat="<?php echo h($user['etat_compte'] ?? '0'); ?>">
+        <img src="<?php echo h(profile_src($user['profil'] ?? '')); ?>" alt="">
+        <?php echo ($user['etat_compte'] ?? '0') === '1' ? '<span class="op vert"></span>' : '<span class="op orange"></span>'; ?>
+        <div class="info">
+            <span><?php echo h($name); ?></span>
+            <span class="apercu"><?php echo h($preview); ?>
+                <?php if ($when !== ''): ?><span class="date_msg"><?php echo h($when); ?></span><?php endif; ?>
+            </span>
+        </div>
+    </li>
+    <?php
+}
+$msgStmt->close();

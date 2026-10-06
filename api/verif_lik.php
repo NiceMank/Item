@@ -1,12 +1,17 @@
 <?php
-include('../config/database.php');
+require_once __DIR__ . '/../config/database.php';
 
-$id_pub = $_GET['pub_id'];
-
-$user_name = $_GET['name'];
-$tru = $conn->query("SELECT * FROM likes WHERE id_pub = '$id_pub' and user_name = '$user_name'");
-$nbr_tru = $tru->num_rows;
-if ($nbr_tru !== 0) {
-    echo "true";
+$userId = require_api_user($conn);
+$pubId = (int) ($_GET['pub_id'] ?? 0);
+header('Content-Type: text/plain; charset=utf-8');
+if ($pubId <= 0) {
+    exit;
 }
-?>
+$stmt = $conn->prepare('SELECT id FROM likes WHERE id_pub = ? AND id_user = ?');
+$stmt->bind_param('ii', $pubId, $userId);
+$stmt->execute();
+$row = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+if ($row) {
+    echo 'true';
+}

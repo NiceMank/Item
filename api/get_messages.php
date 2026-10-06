@@ -1,63 +1,35 @@
 <?php
-// Démarrer la session
-session_start();
+require_once __DIR__ . '/../config/database.php';
 
-// Configuration de la base de données
-include('../config/database.php');
+$userId = require_api_user($conn);
+$receiverId = (int) ($_GET['receiver_id'] ?? 0);
+header('Content-Type: text/html; charset=utf-8');
+header('Cache-Control: no-store');
+if ($receiverId <= 0) {
+    exit;
+}
 
-// Récupérer l'ID de l'utilisateur connecté
-$currentUserId = $_SESSION['user_id'];
-$receiverId = $_GET['receiver_id'];
+$receiver = fetch_user($conn, $receiverId);
+$title = $receiver ? display_name($receiver) : 'Utilisateur';
 
-// Récupérer les messages entre l'utilisateur actuel et le destinataire
-$sql = "SELECT * FROM messages WHERE (id_moi = ? AND id_autre = ?) OR (id_moi = ? AND id_autre = ?) ORDER BY created_at ASC";
+$sql = 'SELECT * FROM messages
+        WHERE (id_moi = ? AND id_autre = ?) OR (id_moi = ? AND id_autre = ?)
+        ORDER BY created_at ASC, id ASC';
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("iiii", $currentUserId, $receiverId, $receiverId, $currentUserId);
+$stmt->bind_param('iiii', $userId, $receiverId, $receiverId, $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$sqle = "SELECT * FROM users WHERE id = ?";
-$stm = $conn->prepare($sqle);
-$stm->bind_param("i",$receiverId);
-$stm->execute();
-$resulte = $stm->get_result();
-$resul = $resulte->fetch_assoc();
-if ($resul['profil'] == "") {
-    $profil = "../assets/img/profile.png";
-}else {
-    $profil = $resul['profil'];
-}
-$tile = $resul['nom']." ".$resul['prenom'];
-    
-
 while ($row = $result->fetch_assoc()) {
-    // $sqle = "SELECT * FROM discussion WHERE (id_moi = ? AND id_autre = ?) OR (id_moi = ? AND id_autre = ?)";
-    // $stm = $conn->prepare($sqle);
-    // $stm->bind_param("iiii", $currentUserId, $receiverId, $receiverId, $currentUserId);
-    // $stm->execute();
-    // $resultd = $stm->get_result();
-    // $di = $resultd->fetch_assoc();
-    // $disc = $di['etat'];
-    $messageClass = ($row['id_moi'] == $currentUserId) ? 'moi' : 'autre';
-    $title = ($row['id_moi'] == $currentUserId) ? 'Vous' : $tile;
-    echo "<div class='mess {$messageClass}' title='{$title}'>";
-    if ($row['id_moi'] == $currentUserId) {
-        // rien
-    }else {
-        // echo "<img class=\"pro3\" src=\"".$profil."\">";
+    $mine = (int) $row['id_moi'] === $userId;
+    $messageClass = $mine ? 'moi' : 'autre';
+    $who = $mine ? 'Vous' : $title;
+    echo '<div class="mess ' . $messageClass . '" title="' . h($who) . '">';
+    echo '<span>' . nl2br(h($row['message'])) . '</span>';
+    if ($mine) {
+        echo '<i class="fas fa-check un"></i><i class="fas fa-check deux"></i>';
     }
-    echo "<span>" . htmlspecialchars($row['message']) . "</span>";
-    if ($row['id_moi'] == $currentUserId) {
-        echo "<i class=\"fas fa-check un\"></i>";
-        echo "<i class=\"fas fa-check deux\"></i>";
-    }
-    
-    echo "</div>";
+    echo '</div>';
 }
-echo "<div id='desc'></div>";
-// $_SESSION['statut_autre'] = null;
-
-// Fermeture de la connexion
+echo '<div id="desc"></div>';
 $stmt->close();
-$conn->close();
-?>
