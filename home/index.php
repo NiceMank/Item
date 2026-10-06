@@ -124,7 +124,7 @@ function render_story(string $text, string $image, string $profil, string $label
                 <form action="publication.php" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
                     <input type="file" name="pub_img" id="imge" required accept="image/jpeg,image/png,image/gif,image/webp">
-                    <span class="sel">Choisir une photo</span>
+                    <button type="button" class="sel" id="pick_pub">Choisir une photo</button>
                     <img id="preview2" alt="">
                     <button type="button" id="Icon" aria-label="Changer"><?php echo icon('edit'); ?></button>
                     <button type="submit" id="publier">Publier</button>
@@ -152,7 +152,7 @@ function render_story(string $text, string $image, string $profil, string $label
                     <form id="story_img" action="story.php" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
                         <input type="file" name="story_img" id="img" required accept="image/jpeg,image/png,image/gif,image/webp">
-                        <span class="sel">Choisir une photo</span>
+                        <button type="button" class="sel" id="pick_story">Choisir une photo</button>
                         <img id="preview" alt="">
                         <button type="button" id="uploadIcon" aria-label="Changer"><?php echo icon('edit'); ?></button>
                         <button type="submit" id="submit">Publier</button>
@@ -193,6 +193,8 @@ function render_story(string $text, string $image, string $profil, string $label
         document.getElementById('ig').onclick = function () { document.getElementById('images').classList.add('active'); };
         document.getElementById('uploadIcon').onclick = function () { document.getElementById('img').click(); };
         document.getElementById('Icon').onclick = function () { document.getElementById('imge').click(); };
+        document.getElementById('pick_pub').onclick = function () { document.getElementById('imge').click(); };
+        document.getElementById('pick_story').onclick = function () { document.getElementById('img').click(); };
         document.getElementById('imge').onchange = function (event) {
             const file = event.target.files[0];
             const preview = document.getElementById('preview2');
