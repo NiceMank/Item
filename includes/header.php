@@ -116,21 +116,23 @@
             if (!form.contains(e.target) && !box.contains(e.target)) clearBox();
         });
     })();
-    document.querySelectorAll('.js-notifs').forEach(function (btn) {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            var panel = document.getElementById('notifPanel');
-            if (!panel) return;
-            var search = document.getElementById('searchResults');
-            if (search) search.hidden = true;
-            panel.hidden = !panel.hidden;
-            if (panel.hidden) return;
-            fetch('../api/notifications.php')
-                .then(function (r) { return r.text(); })
-                .then(function (html) {
-                    panel.innerHTML = html;
-                    document.querySelectorAll('.notif-badge').forEach(function (b) { b.remove(); });
-                });
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.js-notifs').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var panel = document.getElementById('notifPanel');
+                if (!panel) return;
+                var search = document.getElementById('searchResults');
+                if (search) search.hidden = true;
+                panel.hidden = !panel.hidden;
+                if (panel.hidden) return;
+                fetch('../api/notifications.php')
+                    .then(function (r) { return r.text(); })
+                    .then(function (html) {
+                        panel.innerHTML = html;
+                        document.querySelectorAll('.notif-badge').forEach(function (b) { b.remove(); });
+                    });
+            });
         });
     });
 </script>
