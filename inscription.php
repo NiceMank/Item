@@ -56,15 +56,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="shortcut icon" href="assets/img/img.png" type="image/x-icon">
+    <link rel="stylesheet" href="assets/css/ios.css">
+    <link rel="shortcut icon" href="assets/img/WeLogo1.png" type="image/x-icon">
 </head>
-<body>
-    <div class="container">
+<body class="page-auth">
+    <div class="auth-card">
+        <div class="brand-hero">
+            <span class="brand-mark">I</span>
+        </div>
+        <h1>Créer un compte</h1>
+        <p class="sub">Rejoignez Idem en quelques secondes</p>
         <?php if ($erreur): ?>
-            <span class="err"><?php echo h($erreur); ?></span>
+            <p class="err"><?php echo h($erreur); ?></p>
         <?php endif; ?>
-        <h2>Inscription</h2>
         <form action="" method="POST" id="registerForm">
             <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
             <input type="text" name="nom" placeholder="Votre nom" required maxlength="80" value="<?php echo h($nom); ?>">

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/render.php';
+require_once __DIR__ . '/../includes/tabbar.php';
 
 $userId = require_login($conn, '../connexion.php');
 $user_moi = fetch_user($conn, $userId);
@@ -49,18 +50,22 @@ function render_story(string $text, string $image, string $profil, string $label
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Idem | Accueil</title>
     <link rel="shortcut icon" href="../assets/img/WeLogo1.png" type="image/x-icon">
-    <link rel="stylesheet" href="../assets/css/accueil.css">
+    <link rel="stylesheet" href="../assets/css/ios.css">
 </head>
-<body class="<?php echo h(theme_class($user_moi['theme'] ?? '')); ?>" data-profil="<?php echo h($myPhoto); ?>">
+<body class="<?php echo h(theme_class($user_moi['theme'] ?? '')); ?> page-home" data-profil="<?php echo h($myPhoto); ?>">
     <?php include __DIR__ . '/../includes/header.php'; ?>
     <section id="corps">
+        <div class="large-title">
+            <p class="eyebrow"><?php echo h($user_moi['prenom']); ?></p>
+            <h1>Accueil</h1>
+        </div>
         <section id="stories">
             <div id="ajout" class="storie ajout">
                 <img src="<?php echo h($myPhoto); ?>" alt="">
-                <span class="add"><i class="fas fa-add"></i><br><br><b>Creer une Nouvelle story</b></span>
+                <span class="add"><?php echo icon('plus'); ?><b>Votre story</b></span>
             </div>
             <?php
             foreach ($ownStories as $story) {
@@ -88,8 +93,8 @@ function render_story(string $text, string $image, string $profil, string $label
                     <span id="neuf">Quoi de neuf <?php echo h($user_moi['prenom']); ?> ? ...</span>
                 </div>
                 <div class="imag">
-                    <i class="fas fa-image"></i>
-                    <span id="ig">Publier une image ...</span>
+                    <?php echo icon('image'); ?>
+                    <span id="ig">Photo</span>
                 </div>
             </div>
             <div class="pubs">
@@ -103,8 +108,8 @@ function render_story(string $text, string $image, string $profil, string $label
         </section>
         <section id="texte" class="public">
             <div class="publica">
-                <i id="close_pub1" class="fa-solid fa-close"></i>
-                <div class="entete">Creer une publication</div>
+                <button type="button" id="close_pub1" aria-label="Fermer"><?php echo icon('close'); ?></button>
+                <div class="entete">Nouvelle publication</div>
                 <form action="publication.php" method="post">
                     <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
                     <textarea name="pub" id="textarea" required maxlength="5000" placeholder="Ecrivez quelque chose ..."></textarea>
@@ -114,14 +119,14 @@ function render_story(string $text, string $image, string $profil, string $label
         </section>
         <section id="images" class="public">
             <div class="publica">
-                <i id="close_pub2" class="fa-solid fa-close"></i>
-                <div class="entete">Publier une image</div>
+                <button type="button" id="close_pub2" aria-label="Fermer"><?php echo icon('close'); ?></button>
+                <div class="entete">Publier une photo</div>
                 <form action="publication.php" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
                     <input type="file" name="pub_img" id="imge" required accept="image/jpeg,image/png,image/gif,image/webp">
-                    <span class="sel">Choisir une image pour votre Publication <i class="fas fa-image"></i></span>
-                    <img id="preview2" src="" alt="">
-                    <i id="Icon" class="fa fa-pencil edit-button"></i>
+                    <button type="button" class="sel" id="pick_pub">Choisir une photo</button>
+                    <img id="preview2" alt="">
+                    <button type="button" id="Icon" aria-label="Changer"><?php echo icon('edit'); ?></button>
                     <button type="submit" id="publier">Publier</button>
                 </form>
             </div>
@@ -129,46 +134,34 @@ function render_story(string $text, string $image, string $profil, string $label
         <?php include __DIR__ . '/../includes/comment_modal.php'; ?>
         <section id="stor">
             <div class="sto">
-                <i id="close_stor" class="fas fa-close"></i>
+                <button type="button" id="close_stor" aria-label="Fermer"><?php echo icon('close'); ?></button>
                 <div id="part_1" class="par part1">
-                    <div id="type_text" class="type text">Creer une story avec du texte <i class="fas fa-font"></i></div>
-                    <div id="type_img" class="type img">Creer une story avec une photo <i class="fas fa-image"></i></div>
+                    <div class="entete">Nouvelle story</div>
+                    <div id="type_text" class="type text"><span>Texte</span><?php echo icon('edit'); ?></div>
+                    <div id="type_img" class="type img"><span>Photo</span><?php echo icon('image'); ?></div>
                 </div>
                 <div id="part_2" class="par part2">
                     <form id="story_text" action="story.php" method="post">
                         <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
                         <textarea name="story" id="text" placeholder="Commencez à ecrire" required maxlength="500"></textarea>
-                        <button id="submitBtn" type="submit"><i class="fas fa-check"></i></button>
-                        <div class="loader" id="loader">
-                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 50 50">
-                                <path fill="#000" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z">
-                                    <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"/>
-                                </path>
-                            </svg>
-                        </div>
+                        <button id="submitBtn" type="submit">Publier</button>
+                        <div class="spinner" id="loader" role="status" aria-label="Publication"></div>
                     </form>
                 </div>
                 <div id="part_3" class="par part3">
                     <form id="story_img" action="story.php" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="csrf" value="<?php echo h(csrf_token()); ?>">
                         <input type="file" name="story_img" id="img" required accept="image/jpeg,image/png,image/gif,image/webp">
-                        <span class="sel">Choisir une image pour votre story <i class="fas fa-image"></i></span>
-                        <img id="preview" src="" alt="">
-                        <i id="uploadIcon" class="fa fa-pencil edit-button"></i>
-                        <button type="submit" id="submit"><i class="fas fa-check"></i></button>
+                        <button type="button" class="sel" id="pick_story">Choisir une photo</button>
+                        <img id="preview" alt="">
+                        <button type="button" id="uploadIcon" aria-label="Changer"><?php echo icon('edit'); ?></button>
+                        <button type="submit" id="submit">Publier</button>
                     </form>
                 </div>
             </div>
         </section>
     </section>
-    <footer>
-        <ul>
-            <li><a href="index.php"><i class="fas fa-home"></i></a></li>
-            <li><a href="../chats/discussion.php"><i class="fas fa-comments"></i></a></li>
-            <li><a href="#" class="js-notifs"><i class="fas fa-bell"></i></a></li>
-            <li><a href="../profile/profile.php"><i class="fas fa-user"></i></a></li>
-        </ul>
-    </footer>
+    <?php render_tabbar('home'); ?>
     <script src="../assets/js/feed.js"></script>
     <script>
         const ajout = document.getElementById('ajout');
@@ -200,6 +193,8 @@ function render_story(string $text, string $image, string $profil, string $label
         document.getElementById('ig').onclick = function () { document.getElementById('images').classList.add('active'); };
         document.getElementById('uploadIcon').onclick = function () { document.getElementById('img').click(); };
         document.getElementById('Icon').onclick = function () { document.getElementById('imge').click(); };
+        document.getElementById('pick_pub').onclick = function () { document.getElementById('imge').click(); };
+        document.getElementById('pick_story').onclick = function () { document.getElementById('img').click(); };
         document.getElementById('imge').onchange = function (event) {
             const file = event.target.files[0];
             const preview = document.getElementById('preview2');

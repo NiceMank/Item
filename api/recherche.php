@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/tabbar.php';
 
 $userId = require_login($conn, '../connexion.php');
 $user_moi = fetch_user($conn, $userId);
@@ -58,26 +59,46 @@ if ($wantsJson) {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Recherche</title>
-    <link rel="stylesheet" href="../assets/css/accueil.css">
+    <link rel="stylesheet" href="../assets/css/ios.css">
 </head>
-<body class="<?php echo h(theme_class($user_moi['theme'] ?? '')); ?>" data-profil="<?php echo h(profile_src($user_moi['profil'] ?? '')); ?>">
+<body class="<?php echo h(theme_class($user_moi['theme'] ?? '')); ?> page-search" data-profil="<?php echo h(profile_src($user_moi['profil'] ?? '')); ?>">
 <?php include __DIR__ . '/../includes/header.php'; ?>
 <section id="corps">
-    <h2>Recherche <?php echo $q !== '' ? '« ' . h($q) . ' »' : ''; ?></h2>
+    <div class="large-title">
+        <p class="eyebrow">Idem</p>
+        <h1>Recherche</h1>
+    </div>
+    <?php if ($q !== ''): ?><p class="search-query">« <?php echo h($q); ?> »</p><?php endif; ?>
     <?php if ($q === ''): ?>
-        <p>Saisissez un nom, un prénom ou un extrait de publication.</p>
+        <p class="empty">Saisissez un nom, un prénom ou un extrait de publication.</p>
     <?php elseif (!$users && !$posts): ?>
-        <p>Aucun résultat.</p>
+        <p class="empty">Aucun résultat.</p>
     <?php else: ?>
-        <?php foreach ($users as $user): ?>
-            <p><a href="../profile/profile.php?id=<?php echo (int) $user['id']; ?>"><?php echo h($user['name']); ?></a></p>
-        <?php endforeach; ?>
-        <?php foreach ($posts as $post): ?>
-            <p><a href="../home/index.php#pub-<?php echo (int) $post['id']; ?>"><?php echo h($post['author'] . ' : ' . $post['text']); ?></a></p>
-        <?php endforeach; ?>
+        <?php if ($users): ?>
+            <section class="friends">
+                <h3>Personnes</h3>
+                <?php foreach ($users as $user): ?>
+                    <a href="../profile/profile.php?id=<?php echo (int) $user['id']; ?>">
+                        <img src="<?php echo h($user['profil']); ?>" alt="">
+                        <span><?php echo h($user['name']); ?></span>
+                    </a>
+                <?php endforeach; ?>
+            </section>
+        <?php endif; ?>
+        <?php if ($posts): ?>
+            <section class="friends">
+                <h3>Publications</h3>
+                <?php foreach ($posts as $post): ?>
+                    <a href="../home/index.php#pub-<?php echo (int) $post['id']; ?>">
+                        <span><?php echo h($post['author'] . ' : ' . $post['text']); ?></span>
+                    </a>
+                <?php endforeach; ?>
+            </section>
+        <?php endif; ?>
     <?php endif; ?>
 </section>
+<?php render_tabbar('home'); ?>
 </body>
 </html>

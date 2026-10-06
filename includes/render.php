@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/icons.php';
 
 function render_publication(array $pub): void
 {
@@ -40,8 +41,8 @@ function render_publication(array $pub): void
         <?php endif; ?>
         <div class="notes">
             <div class="like<?php echo $liked ? ' true' : ''; ?>" data-id="<?php echo $pubId; ?>">
+                <?php echo icon('heart'); ?>
                 <span class="nbr_like"><?php echo $likes > 0 ? (string) $likes : ''; ?></span>
-                <i class="fa-solid fa-heart"></i>
                 <span class="t">J'adore</span>
             </div>
             <div class="comment"
@@ -50,8 +51,8 @@ function render_publication(array $pub): void
                 data-profil="<?php echo h($profil); ?>"
                 data-img="<?php echo h($image); ?>"
                 data-text="<?php echo h($text); ?>">
+                <?php echo icon('comment'); ?>
                 <span class="nbr_com"><?php echo $comments > 0 ? (string) $comments : ''; ?></span>
-                <i class="fa-solid fa-comment"></i>
                 <span>Commenter</span>
             </div>
         </div>
