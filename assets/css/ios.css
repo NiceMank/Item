@@ -188,6 +188,7 @@ body.sombre .avatar-link img { box-shadow: 0 0 0 2px rgba(255,255,255,.15); }
     }
     .tabbar .tab { flex: none; width: 100%; padding: 10px 0; font-size: 11px; }
     .nav { display: flex; align-items: center; gap: 18px; height: var(--nav-h); padding-top: 0; padding-bottom: 0; }
+    .nav-actions .notifi { display: none; }
     .search-wrap { margin: 0; flex: 1; max-width: 460px; }
     .notif-panel { left: auto; width: min(380px, 36vw); right: 14px; top: calc(100% + 8px); }
     .ti { max-width: 180px; }
