@@ -507,7 +507,7 @@ body.page-chat { overflow: hidden; height: 100dvh; }
 .profile-hero p { color: var(--secondary); margin-top: 4px; }
 .friend-btn, .linkish {
     display: inline-flex; align-items: center; justify-content: center;
-    margin-top: 12px; min-height: 36px; padding: 0 14px; border-radius: 999px;
+    margin: 12px 6px 0; min-height: 36px; padding: 0 16px; border-radius: 999px;
     background: var(--tint); color: white; border: 0; font-weight: 700;
 }
 .group { padding: 4px 0; margin: 14px 0; overflow: hidden; }
